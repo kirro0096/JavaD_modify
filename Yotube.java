@@ -12,14 +12,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Yotube {
-    // 利用API https://www.googleapis.com/youtube/v3/search
     private static final String API_KEY = "AIzaSyDygHjcMIilSCixVEHEmuwHRaO-iPkLLEQ";
     private static final String SEARCH_URL = "https://www.googleapis.com/youtube/v3/search";
 
     public static void main(String[] args) {
         String query = inputKeyword();
-        List<JSONObject> videoSnippets = new ArrayList<>();
-        List<String> videoIds = searchYoutube(query, videoSnippets);
+        String jsonResponse = searchYoutube(query);
+        List<String> videoIds = new ArrayList<>();
+        List<JSONObject> videoSnippets = parseVideoItems(jsonResponse, videoIds);
         if (videoIds.isEmpty()) {
             System.out.println("該当する動画がありませんでした。");
             return;
@@ -38,8 +38,7 @@ public class Yotube {
     }
 
     // YouTube検索API呼び出し
-    private static List<String> searchYoutube(String query, List<JSONObject> videoSnippets) {
-        List<String> videoIds = new ArrayList<>();
+    private static String searchYoutube(String query) {
         try {
             String charset = "UTF-8";
             String q = URLEncoder.encode(query, charset);
@@ -56,8 +55,21 @@ public class Yotube {
                 response.append(inputLine);
             }
             in.close();
+            return response.toString();
+        } catch (Exception e) {
+            System.out.println("検索APIエラー: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-            JSONObject json = new JSONObject(response.toString());
+    // 検索結果から動画IDとスニペット抽出
+    private static List<JSONObject> parseVideoItems(String jsonResponse, List<String> videoIds) {
+        List<JSONObject> videoSnippets = new ArrayList<>();
+        if (jsonResponse == null)
+            return videoSnippets;
+        try {
+            JSONObject json = new JSONObject(jsonResponse);
             JSONArray items = json.getJSONArray("items");
             for (int i = 0; i < items.length(); i++) {
                 JSONObject item = items.getJSONObject(i);
@@ -74,10 +86,10 @@ public class Yotube {
                 videoSnippets.add(snippetWithId);
             }
         } catch (Exception e) {
-            System.out.println("検索APIエラー: " + e.getMessage());
+            System.out.println("JSONパースエラー: " + e.getMessage());
             e.printStackTrace();
         }
-        return videoIds;
+        return videoSnippets;
     }
 
     // 再生回数取得
