@@ -31,6 +31,9 @@ public class Yotube {
     // キーワード入力
     private static String inputKeyword() {
         Scanner scanner = new Scanner(System.in);
+        System.out.println("----------------------");
+        System.out.println("YouTube動画検索ツール");
+        System.out.println("----------------------");
         System.out.print("検索キーワードを入力してください: ");
         String query = scanner.nextLine();
         scanner.close();
