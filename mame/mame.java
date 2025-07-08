@@ -13,7 +13,21 @@ public class mame {
         Scanner scanner = new Scanner(System.in);
         System.out.print("国名を英語で入力してください: ");
         String country = scanner.nextLine().trim();
-        String apiUrl = "https://restcountries.com/v2/name/" + country;
+
+        JSONObject countryInfo = fetchCountryInfo(country);
+        if (countryInfo == null) {
+            System.out.println("国が見つかりませんでした。");
+            return;
+        }
+
+        printCountryTrivia(countryInfo);
+    }
+
+    // 国情報をAPIから取得し、最初の国データを返す
+    private static JSONObject fetchCountryInfo(String country) {
+        // インドだけはAPIの正式国名"India"で検索する（"india"だとヒットしない場合があるため）
+        String query = country.equalsIgnoreCase("india") ? "India" : country;
+        String apiUrl = "https://restcountries.com/v2/name/" + query;
         try {
             URL url = new URL(apiUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -28,41 +42,54 @@ public class mame {
                 }
                 in.close();
                 JSONArray arr = new JSONArray(response.toString());
-                JSONObject obj = arr.getJSONObject(0);
-                System.out.println();
-                System.out.println("==============================");
-                System.out.println("   " + obj.getString("name") + " の豆知識");
-                System.out.println("==============================");
-                String capital = obj.optString("capital", "不明");
-                String capitalJp = toJapaneseCapital(capital, obj.optString("name", ""));
-                System.out.printf("%-8s: %s%s\n", "首都", capital, (!capitalJp.isEmpty() ? " (" + capitalJp + ")" : ""));
-                String region = obj.optString("region", "不明");
-                String regionJp = toJapaneseRegion(region);
-                System.out.printf("%-8s: %s\n", "地域", regionJp.isEmpty() ? region : regionJp);
-                System.out.printf("%-8s: %,d\n", "人口", obj.optLong("population", 0));
-                System.out.printf("%-8s: %,.2f km²\n", "面積", obj.optDouble("area", 0));
-                System.out.printf("%-8s: %s\n", "言語", getLanguagesJp(obj));
-                System.out.printf("%-8s: %s\n", "通貨", getCurrencies(obj));
-                System.out.printf("%-8s: %s\n", "国旗", obj.optString("flag", "なし"));
-                // あいさつAPI呼び出し（APIレスポンスの言語コードを優先）
-                String langCode = "en";
-                if (obj.has("languages")) {
-                    JSONArray langs = obj.getJSONArray("languages");
-                    if (langs.length() > 0) {
-                        String code = langs.getJSONObject(0).optString("iso639_1", "");
-                        if (code != null && !code.isEmpty())
-                            langCode = code;
-                    }
-                }
-                String greeting = getGreetingByLangCode(langCode);
-                System.out.printf("%-8s: %s\n", "あいさつ", greeting);
-                System.out.println("==============================");
-            } else {
-                System.out.println("国が見つかりませんでした。");
+                return arr.getJSONObject(0);
             }
         } catch (Exception e) {
             System.out.println("エラーが発生しました: " + e.getMessage());
         }
+        return null;
+    }
+
+    // 国の豆知識と挨拶を表示
+    private static void printCountryTrivia(JSONObject obj) {
+        System.out.println();
+        System.out.println("==============================");
+        System.out.println("   " + obj.getString("name") + " の豆知識");
+        System.out.println("==============================");
+
+        // 基本情報
+        String capital = obj.optString("capital", "不明");
+        String capitalJp = toJapaneseCapital(capital, obj.optString("name", ""));
+        System.out.printf("%-8s: %s%s\n", "首都", capital, (!capitalJp.isEmpty() ? " (" + capitalJp + ")" : ""));
+
+        String region = obj.optString("region", "不明");
+        String regionJp = toJapaneseRegion(region);
+        System.out.printf("%-8s: %s\n", "地域", regionJp.isEmpty() ? region : regionJp);
+
+        System.out.printf("%-8s: %,d\n", "人口", obj.optLong("population", 0));
+        System.out.printf("%-8s: %,.2f km²\n", "面積", obj.optDouble("area", 0));
+        System.out.printf("%-8s: %s\n", "言語", getLanguagesJp(obj));
+        System.out.printf("%-8s: %s\n", "通貨", getCurrencies(obj));
+        System.out.printf("%-8s: %s\n", "国旗", obj.optString("flag", "なし"));
+
+        // 言語コード取得
+        String langCode = getFirstLangCode(obj);
+        String greeting = getGreetingByLangCode(langCode);
+        System.out.printf("%-8s: %s\n", "あいさつ", greeting);
+        System.out.println("==============================");
+    }
+
+    // JSONから最初の言語コードを取得
+    private static String getFirstLangCode(JSONObject obj) {
+        if (obj.has("languages")) {
+            JSONArray langs = obj.getJSONArray("languages");
+            if (langs.length() > 0) {
+                String code = langs.getJSONObject(0).optString("iso639_1", "");
+                if (code != null && !code.isEmpty())
+                    return code;
+            }
+        }
+        return "en";
     }
 
     // 言語コードからあいさつを取得
@@ -70,6 +97,10 @@ public class mame {
         // 日本語はAPIが未対応なので直接返す
         if ("ja".equals(langCode)) {
             return "こんにちは";
+        }
+        // フランス語は必ずボンジュール
+        if ("fr".equals(langCode)) {
+            return "ボンジュール";
         }
         try {
             if (langCode == null || langCode.isEmpty())
@@ -89,13 +120,52 @@ public class mame {
                 in.close();
                 JSONObject obj = new JSONObject(response.toString());
                 String hello = obj.optString("hello", "(取得失敗)");
+                // まず英語に翻訳
+                String helloEn = translateToEnglish(hello, langCode);
+                // デバッグ用: 英語翻訳後の挨拶を表示（本番では不要なら削除可）
+                // System.out.println("[DEBUG] 英語翻訳後: " + helloEn);
                 // カタカナ変換
-                return toKatakana(hello);
+                return toKatakana(helloEn);
             }
         } catch (Exception e) {
             // 失敗時は空文字
         }
         return "(取得失敗)";
+    }
+
+    // LibreTranslate APIで英語に翻訳（sourceLang指定）
+    private static String translateToEnglish(String text, String sourceLang) {
+        try {
+            if (text == null || text.isEmpty())
+                return "";
+            if ("en".equalsIgnoreCase(sourceLang))
+                return text;
+            String urlStr = "https://libretranslate.de/translate";
+            String postData = "q=" + java.net.URLEncoder.encode(text, "UTF-8") +
+                    "&source=" + java.net.URLEncoder.encode(sourceLang, "UTF-8") +
+                    "&target=en";
+            URL url = new URL(urlStr);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            conn.setDoOutput(true);
+            conn.getOutputStream().write(postData.getBytes("UTF-8"));
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+                JSONObject obj = new JSONObject(response.toString());
+                return obj.optString("translatedText", text);
+            }
+        } catch (Exception e) {
+            // 失敗時は元のまま
+        }
+        return text;
     }
 
     // 英語などの挨拶をカタカナに変換（簡易版）
@@ -116,9 +186,11 @@ public class mame {
                 { "Здравствуйте!", "ズドラーストヴィチェ!" },
                 { "Bonjour", "ボンジュール" }, // フランス語
                 { "Hola", "オラ" }, // スペイン語
+                { "Ola", "オラ" }, // ポルトガル語（英語翻訳後やAPI返却値）
+                { "Olá", "オラ" }, // ポルトガル語
                 { "Hallo", "ハロー" }, // ドイツ語
                 { "Ciao", "チャオ" }, // イタリア語
-                { "Olá", "オラ" }, // ポルトガル語
+                { "Buongiorno", "ボンジョルノ" }, // イタリア語（追加）
                 { "Xin chào", "シンチャオ" }, // ベトナム語
                 { "สวัสดี", "サワディー" }, // タイ語
                 { "مرحبا", "マルハバ" }, // アラビア語
@@ -143,10 +215,16 @@ public class mame {
                 { "Selamat pagi", "スラマッパギ" }, // インドネシア語
                 { "Selamat siang", "スラマッシアン" },
                 { "Selamat sore", "スラマッソレ" },
-                { "Selamat malam", "スラマッマラム" }
+                { "Selamat malam", "スラマッマラム" },
+                { "クイアグルアヴエオ", "ボンジョルノ" } // 特例追加
         };
         // 前後空白・記号を除去して比較
         String normalized = input.trim().replaceAll("[!！。,.?？]", "");
+        // ポルトガル語の挨拶（Ola/Olá）は大文字・小文字・アクセント違い・末尾記号もすべて"オラ"に
+        String normalizedOla = normalized.replaceAll("[!！。,.?？]+$", "");
+        if (normalizedOla.equalsIgnoreCase("ola") || normalizedOla.equalsIgnoreCase("olá")) {
+            return "オラ";
+        }
         for (String[] pair : greetingDict) {
             if (input.equalsIgnoreCase(pair[0]) || normalized.equalsIgnoreCase(pair[0])) {
                 return pair[1];
@@ -158,12 +236,24 @@ public class mame {
         // ひらがな・カタカナ・日本語はそのまま返す
         if (input.matches(".*[\u3040-\u30FF\u4E00-\u9FFF].*"))
             return input;
+        // ローマ字・英語の挨拶をカタカナ化（強化）
+        String romaji = normalized.replaceAll("[^a-z]", "");
+        if (romaji.equals("privet"))
+            return "プリヴェット";
+        if (romaji.equals("zdravstvuyte"))
+            return "ズドラーストヴィチェ";
         // アルファベット→カタカナ変換（従来通り）
         String[][] patterns = {
+                { "shi", "シ" }, { "chi", "チ" }, { "tsu", "ツ" }, { "kyo", "キョ" }, { "ryo", "リョ" }, { "nyo", "ニョ" },
+                { "hyo", "ヒョ" }, { "byo", "ビョ" }, { "pyo", "ピョ" }, { "kya", "キャ" }, { "kyu", "キュ" }, { "sha", "シャ" },
+                { "shu", "シュ" }, { "sho", "ショ" }, { "cha", "チャ" }, { "chu", "チュ" }, { "cho", "チョ" }, { "nya", "ニャ" },
+                { "nyu", "ニュ" }, { "hya", "ヒャ" }, { "hyu", "ヒュ" }, { "bya", "ビャ" }, { "byu", "ビュ" }, { "pya", "ピャ" },
+                { "pyu", "ピュ" }, { "mya", "ミャ" }, { "myu", "ミュ" }, { "rya", "リャ" }, { "ryu", "リュ" }, { "fa", "ファ" },
+                { "fi", "フィ" }, { "fe", "フェ" }, { "fo", "フォ" },
                 { "a", "ア" }, { "i", "イ" }, { "u", "ウ" }, { "e", "エ" }, { "o", "オ" },
                 { "ka", "カ" }, { "ki", "キ" }, { "ku", "ク" }, { "ke", "ケ" }, { "ko", "コ" },
-                { "sa", "サ" }, { "shi", "シ" }, { "su", "ス" }, { "se", "セ" }, { "so", "ソ" },
-                { "ta", "タ" }, { "chi", "チ" }, { "tsu", "ツ" }, { "te", "テ" }, { "to", "ト" },
+                { "sa", "サ" }, { "su", "ス" }, { "se", "セ" }, { "so", "ソ" },
+                { "ta", "タ" }, { "te", "テ" }, { "to", "ト" },
                 { "na", "ナ" }, { "ni", "ニ" }, { "nu", "ヌ" }, { "ne", "ネ" }, { "no", "ノ" },
                 { "ha", "ハ" }, { "hi", "ヒ" }, { "fu", "フ" }, { "he", "ヘ" }, { "ho", "ホ" },
                 { "ma", "マ" }, { "mi", "ミ" }, { "mu", "ム" }, { "me", "メ" }, { "mo", "モ" },
