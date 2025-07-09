@@ -1,0 +1,56 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "kuizu",
+            "request": "launch",
+            "mainClass": "kuizu.kuizu",
+            "projectName": "JavaD_modify_5b318013"
+        },
+        {
+            "type": "java",
+            "name": "shokuhinn",
+            "request": "launch",
+            "mainClass": "shokuzaiapi.shokuhinn",
+            "projectName": "JavaD_modify_5b318013",
+            "vmArgs": "-Dfile.encoding=UTF-8",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "java",
+            "name": "Launch shokuhinn",
+            "request": "launch",
+            "mainClass": "shokuzaiapi.shokuhinn",
+            "projectName": "shokuzaiapi",
+            "vmArgs": "-Dfile.encoding=UTF-8",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "java",
+            "name": "Launch inu",
+            "request": "launch",
+            "mainClass": "inuapi.inu",
+            "projectName": "inu api",
+            "vmArgs": "-Dfile.encoding=UTF-8",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "java",
+            "name": "Launch cat",
+            "request": "launch",
+            "mainClass": "catapi.cat",
+            "projectName": "catapi",
+            "vmArgs": "-Dfile.encoding=UTF-8",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "java",
+            "name": "Launch Yotube",
+            "request": "launch",
+            "mainClass": "Yotube",
+            "vmArgs": "-Dfile.encoding=UTF-8",
+            "console": "integratedTerminal"
+        }
+    ]
+}
