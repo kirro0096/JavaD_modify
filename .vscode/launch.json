@@ -3,6 +3,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "NasaApiExample",
+            "request": "launch",
+            "mainClass": "NasaApiExample",
+            "projectName": "JavaD_modify_e2335531"
+        },
+        {
+            "type": "java",
             "name": "kuizu",
             "request": "launch",
             "mainClass": "kuizu.kuizu",
