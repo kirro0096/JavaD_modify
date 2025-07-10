@@ -3,6 +3,7 @@
     "configurations": [
         {
             "type": "java",
+<<<<<<< HEAD
             "name": "time",
             "request": "launch",
             "mainClass": "time",
@@ -21,6 +22,12 @@
             "request": "launch",
             "mainClass": "shokuzaiapi.shokuhinn",
             "projectName": "JavaD_modify_1edd5eb5"
+=======
+            "name": "NasaApiExample",
+            "request": "launch",
+            "mainClass": "NasaApiExample",
+            "projectName": "JavaD_modify_e2335531"
+>>>>>>> aef08e070f4f867af6e2d05bf34c79059c13cb0e
         },
         {
             "type": "java",
