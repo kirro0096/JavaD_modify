@@ -3,6 +3,27 @@
     "configurations": [
         {
             "type": "java",
+            "name": "time",
+            "request": "launch",
+            "mainClass": "time",
+            "projectName": "JavaD_modify_1edd5eb5"
+        },
+        {
+            "type": "java",
+            "name": "GenerateTextFromTextInput",
+            "request": "launch",
+            "mainClass": "GenerateTextFromTextInput",
+            "projectName": "JavaD_modify_1edd5eb5"
+        },
+        {
+            "type": "java",
+            "name": "shokuhinn",
+            "request": "launch",
+            "mainClass": "shokuzaiapi.shokuhinn",
+            "projectName": "JavaD_modify_1edd5eb5"
+        },
+        {
+            "type": "java",
             "name": "kuizu",
             "request": "launch",
             "mainClass": "kuizu.kuizu",
