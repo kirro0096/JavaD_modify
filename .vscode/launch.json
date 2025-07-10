@@ -3,6 +3,41 @@
     "configurations": [
         {
             "type": "java",
+            "name": "jisyo",
+            "request": "launch",
+            "mainClass": "jisyo_api.jisyo",
+            "projectName": "JavaD_modify_a7b886f2"
+        },
+        {
+            "type": "java",
+            "name": "News",
+            "request": "launch",
+            "mainClass": "news_api.News",
+            "projectName": "JavaD_modify_a7b886f2"
+        },
+        {
+            "type": "java",
+            "name": "kuizu",
+            "request": "launch",
+            "mainClass": "kuizu.kuizu",
+            "projectName": "JavaD_modify_a7b886f2"
+        },
+        {
+            "type": "java",
+            "name": "time",
+            "request": "launch",
+            "mainClass": "time",
+            "projectName": "JavaD_modify_a7b886f2"
+        },
+        {
+            "type": "java",
+            "name": "shokuhinn",
+            "request": "launch",
+            "mainClass": "shokuzaiapi.shokuhinn",
+            "projectName": "JavaD_modify_a7b886f2"
+        },
+        {
+            "type": "java",
             "name": "kuizu",
             "request": "launch",
             "mainClass": "kuizu.kuizu",
