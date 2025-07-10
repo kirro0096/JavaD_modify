@@ -1,0 +1,73 @@
+【NasaApiExample.java の詳しい解説】
+
+1. 必要なライブラリのインポート
+-----------------------------
+- BufferedReader, InputStreamReader：APIからのレスポンス（データ）を1行ずつ読み込むために使います。
+- HttpURLConnection, URL：HTTP通信（APIリクエスト）を行うために使います。
+
+2. クラス定義
+-------------
+public class NasaApiExample {
+    ...
+}
+→ Javaのメインクラスです。
+
+3. mainメソッド
+----------------
+- Javaアプリのエントリーポイント（実行開始地点）です。
+
+4. APIキーとエンドポイントURLの設定
+-----------------------------------
+String apiKey = "OqUGsfRmjpXxNGwjHwpKnCQjkagy1yk9qs2A6gXP";
+String endpoint = "https://api.nasa.gov/planetary/apod?api_key=" + apiKey;
+→ NASAのAPOD APIを使うためのURLを作成します。
+
+5. HTTPリクエストの送信
+-----------------------
+URL url = new URL(endpoint);
+HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+conn.setRequestMethod("GET");
+→ APIサーバーにGETリクエストを送信します。
+
+6. レスポンスの取得と判定
+------------------------
+int responseCode = conn.getResponseCode();
+if (responseCode == HttpURLConnection.HTTP_OK) {
+    ...
+}
+→ レスポンスコードが200（成功）なら、データを取得します。
+
+7. レスポンスデータの読み込み
+---------------------------
+BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+StringBuilder response = new StringBuilder();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+→ APIから返ってきたJSONデータを1行ずつ読み込み、1つの文字列にまとめます。
+
+8. JSONから必要な情報を抽出
+--------------------------
+String json = response.toString();
+String title = SimpleJsonParser.getValue(json, "title");
+String explanation = SimpleJsonParser.getValue(json, "explanation");
+String urlImg = SimpleJsonParser.getValue(json, "url");
+→ 取得したJSON文字列から、タイトル・説明・画像URLを抜き出します。
+（SimpleJsonParserは簡易的なJSONパーサークラスです）
+
+9. 結果の表示
+-------------
+System.out.println("\n--- NASA APOD ---");
+System.out.println("タイトル: " + title);
+System.out.println("説明: " + explanation);
+System.out.println("画像URL: " + urlImg);
+→ 必要な情報を見やすく表示します。
+
+10. エラー処理
+--------------
+try-catch構文で、例外（エラー）が発生した場合はエラーメッセージを表示します。
+
+【補足】
+- SimpleJsonParserは、JSON文字列から特定のキーの値を抜き出すための自作クラスです。
+- 本格的なJSON処理にはGsonやorg.jsonなどのライブラリを使うのが一般的です。
