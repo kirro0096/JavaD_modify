@@ -3,31 +3,38 @@
     "configurations": [
         {
             "type": "java",
-<<<<<<< HEAD
-            "name": "time",
+            "name": "jisyo",
             "request": "launch",
-            "mainClass": "time",
-            "projectName": "JavaD_modify_1edd5eb5"
+            "mainClass": "jisyo_api.jisyo",
+            "projectName": "JavaD_modify_a7b886f2"
         },
         {
             "type": "java",
-            "name": "GenerateTextFromTextInput",
+            "name": "News",
             "request": "launch",
-            "mainClass": "GenerateTextFromTextInput",
-            "projectName": "JavaD_modify_1edd5eb5"
+            "mainClass": "news_api.News",
+            "projectName": "JavaD_modify_a7b886f2"
+        },
+        {
+            "type": "java",
+            "name": "kuizu",
+            "request": "launch",
+            "mainClass": "kuizu.kuizu",
+            "projectName": "JavaD_modify_a7b886f2"
+        },
+        {
+            "type": "java",
+            "name": "time",
+            "request": "launch",
+            "mainClass": "time",
+            "projectName": "JavaD_modify_a7b886f2"
         },
         {
             "type": "java",
             "name": "shokuhinn",
             "request": "launch",
             "mainClass": "shokuzaiapi.shokuhinn",
-            "projectName": "JavaD_modify_1edd5eb5"
-=======
-            "name": "NasaApiExample",
-            "request": "launch",
-            "mainClass": "NasaApiExample",
-            "projectName": "JavaD_modify_e2335531"
->>>>>>> aef08e070f4f867af6e2d05bf34c79059c13cb0e
+            "projectName": "JavaD_modify_a7b886f2"
         },
         {
             "type": "java",
