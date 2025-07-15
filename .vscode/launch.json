@@ -3,38 +3,7 @@
     "configurations": [
         {
             "type": "java",
-            "name": "inu",
-            "request": "launch",
-            "mainClass": "inu",
-            "projectName": "JavaD_modify_5b318013"
-        },
-        {
-            "type": "java",
-            "name": "cat",
-            "request": "launch",
-            "mainClass": "catapi.cat",
-            "projectName": "JavaD_modify_5b318013"
-        },
-        {
-            "type": "java",
-            "name": "sakana",
-            "request": "launch",
-            "mainClass": "sakanaapi.sakana",
-            "projectName": "JavaD_modify_5b318013"
-        },
-        {
-            "type": "java",
-            "name": "ikimono",
-            "request": "launch",
-            "mainClass": "umi.ikimono",
-            "projectName": "JavaD_modify_5b318013"
-        },
-        {
-            "type": "java",
-            "name": "kokki",
-            "request": "launch",
-            "mainClass": "kokkiapi.kokki",
-            "projectName": "JavaD_modify_5b318013"
+
         },
         {
             "type": "java",
