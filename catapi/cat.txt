@@ -1,0 +1,41 @@
+クラス　【cat.java】
+
+説明【The Cat APIを利用して、猫の品種リストを表示し、ユーザーが指定した品種の画像を取得してGUIで表示するアプリケーションです。】
+
+---
+
+関数名 【getCatBreeds】
+
+リファレンス
+【The Cat API: /v1/breeds】
+
+説明
+【The Cat APIのbreedsエンドポイントを呼び出し、登録されている全ての猫の品種リストを取得します。APIキーをリクエストヘッダーに含めて認証を行い、レスポンスをJSON配列として返します。取得に失敗した場合はエラーメッセージを表示し、nullを返します。】
+
+関数名 【getCatImageJson】
+
+リファレンス
+【The Cat API: /v1/images/search】
+
+説明
+【引数で受け取った品種ID（breedId）を使い、The Cat APIのimages/searchエンドポイントを呼び出して、特定の品種の画像情報を取得します。APIキーをリクエストヘッダーに含めて認証を行い、レスポンスをJSON配列として返します。取得に失敗した場合はエラーメッセージを表示し、nullを返します。】
+
+---使用したWebApi---
+
+URL 【https://api.thecatapi.com/v1/breeds】
+
+説明【The Cat API の「breedsリソース」にアクセスするためのエンドポイント。
+      主な用途は、登録されている全ての猫の品種リスト（名前、ID、性格など）を取得するために使用します。
+      このプログラムでは、APIキーをヘッダーに設定して認証しています。
+      
+      公式リファレンス: https://docs.thecatapi.com/api-reference/breeds/breeds-list】
+
+URL　【https://api.thecatapi.com/v1/images/search】
+
+説明【The Cat API の「imagesリソース」にアクセスするためのエンドポイント。
+      主な用途は、様々な条件で猫の画像を検索するために使用します。
+      このプログラムでは、以下のパラメータを使用しています。
+      ・breed_ids：画像を取得したい品種のIDを指定。
+
+      公式リファレンス: https://docs.thecatapi.com/api-reference/images/images-search】
+

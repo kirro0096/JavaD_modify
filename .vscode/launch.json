@@ -3,6 +3,41 @@
     "configurations": [
         {
             "type": "java",
+            "name": "inu",
+            "request": "launch",
+            "mainClass": "inu",
+            "projectName": "JavaD_modify_5b318013"
+        },
+        {
+            "type": "java",
+            "name": "cat",
+            "request": "launch",
+            "mainClass": "catapi.cat",
+            "projectName": "JavaD_modify_5b318013"
+        },
+        {
+            "type": "java",
+            "name": "sakana",
+            "request": "launch",
+            "mainClass": "sakanaapi.sakana",
+            "projectName": "JavaD_modify_5b318013"
+        },
+        {
+            "type": "java",
+            "name": "ikimono",
+            "request": "launch",
+            "mainClass": "umi.ikimono",
+            "projectName": "JavaD_modify_5b318013"
+        },
+        {
+            "type": "java",
+            "name": "kokki",
+            "request": "launch",
+            "mainClass": "kokkiapi.kokki",
+            "projectName": "JavaD_modify_5b318013"
+        },
+        {
+            "type": "java",
             "name": "kuizu",
             "request": "launch",
             "mainClass": "kuizu.kuizu",
@@ -51,6 +86,16 @@
             "mainClass": "Yotube",
             "vmArgs": "-Dfile.encoding=UTF-8",
             "console": "integratedTerminal"
+        },
+        {
+            "type": "java",
+            "name": "shokuhinn (UTF-8 with chcp)",
+            "request": "launch",
+            "mainClass": "shokuzaiapi.shokuhinn",
+            "projectName": "shokuzaiapi",
+            "vmArgs": "-Dfile.encoding=UTF-8",
+            "console": "integratedTerminal",
+            "preLaunchTask": "Set terminal to UTF-8 (chcp 65001)"
         }
     ]
 }
