@@ -1,0 +1,55 @@
+YouTube検索　マニュアル
+
+クラス　【YouTube.java】
+
+説明【YouTube Data API v3 を利用して、指定したキーワードでYouTube動画を検索し、検索結果の動画を再生回数順に表示する】
+
+
+
+関数名 【searchYoutube】
+
+リファレンス
+【YouTube Data API v3: search.list】
+
+説明
+【ユーザーが入力したキーワードを使ってYouTubeの動画検索API（searchリソース）を呼び出し、検索結果（動画IDやタイトルなどの情報が含まれるJSON）を取得しています。
+具体的には、キーワードをURLエンコードし、https://www.googleapis.com/youtube/v3/search にGETリクエストを送り、レスポンスを文字列として返します。】
+
+関数名 【getViewCounts】
+
+リファレンス
+【YouTube Data API v3: videos.list】
+
+説明
+【検索で得た動画IDリストを使い、YouTubeの動画情報API（videosリソース）を呼び出して、各動画の再生回数（viewCount）を取得しています。
+具体的には、動画IDをカンマ区切りで連結し、https://www.googleapis.com/youtube/v3/videos にGETリクエストを送り、各動画IDごとの再生回数をMapとして返します。】
+
+
+---使用したWebApi---
+
+URL 【https://www.googleapis.com/youtube/v3/search】
+
+説明【YouTube Data API v3 の「searchリソース」にアクセスするためのエンドポイント
+　　　主な用途はYouTube上の動画を検索するために使用。
+　　　主なパラメータの例としては
+　　　・part：取得する情報の種類（例: snippet）
+　　　・q：検索キーワード
+　　　・type：検索対象（例: video, channel, playlist）
+　　　・maxResults：取得する件数（最大50件）
+　　　
+　　　公式リファレンス
+　　　YouTube Data API v3: search.list】
+
+
+URL　【https://www.googleapis.com/youtube/v3/videos】
+
+説明【YouTube Data API v3 の「videosリソース」にアクセスするためのエンドポイント
+　　　主な用途は動画IDを指定して、YouTube動画の詳細情報（再生回数、評価数、タイトル、説明、公開日など）を取得するために使用。
+　　　主なパラメータの例としては
+　　　・part：取得する情報の種類（例: statistics, snippet, contentDetails など）
+　　　・id：取得したい動画のID（カンマ区切りで複数指定可能）
+
+　　　公式リファレンス
+　　　YouTube Data API v3: videos.list】
+
+

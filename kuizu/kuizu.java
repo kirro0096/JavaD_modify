@@ -9,18 +9,29 @@ import org.json.JSONObject;
 import java.util.Scanner;
 
 public class kuizu {
+    private static final HttpClient client = HttpClient.newHttpClient();
+
     // MyMemory APIで英語→日本語翻訳
     public static String translateToJapanese(String text) throws Exception {
         String encodedQuery = java.net.URLEncoder.encode(text, "UTF-8");
         String langpair = java.net.URLEncoder.encode("en|ja", "UTF-8");
         String apiUrl = "https://api.mymemory.translated.net/get?q=" + encodedQuery + "&langpair=" + langpair;
-        HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(apiUrl))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         JSONObject root = new JSONObject(response.body());
         return root.getJSONObject("responseData").getString("translatedText");
+    }
+
+    // Open Trivia Database APIからクイズを1問取得
+    private static JSONObject getQuizFromApi(String difficulty) throws Exception {
+        String apiUrl = "https://opentdb.com/api.php?amount=1&type=multiple&difficulty=" + difficulty;
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return new JSONObject(response.body());
     }
 
     public static void main(String[] args) throws Exception {
@@ -48,15 +59,9 @@ public class kuizu {
                 return;
         }
         // Open Trivia Database APIからクイズを1問取得（難易度指定）
-        String apiUrl = "https://opentdb.com/api.php?amount=1&type=multiple&difficulty=" + difficulty;
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(apiUrl))
-                .build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        JSONObject root = new JSONObject(response.body());
+        JSONObject root = getQuizFromApi(difficulty);
         if (!root.has("results")) {
-            System.out.println("APIレスポンスに'results'がありません: " + response.body());
+            System.out.println("APIレスポンスに'results'がありません: " + root.toString());
             scanner.close();
             return;
         }
