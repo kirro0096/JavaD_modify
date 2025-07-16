@@ -10,7 +10,7 @@ public class inu {
     private static final HttpClient client = HttpClient.newHttpClient();
     // 注: このURLはAPIキーがドメイン名に含まれているように見え、正しくない可能性があります。
     // TheDogAPIを利用する場合、通常は "https://api.thedogapi.com/v1/breeds" のようなURLを使用します。
-    private static final String BREEDS_API_URL = "https://api.ehrIIKvl4UasDx8GzQLZ3nXAaYMSr0DJ1WWzahs8BDaFyMSCGmiLOtHxqu9zFnc/breeds";
+    private static final String BREEDS_API_URL = "https://api.thedogapi.com/v1/breeds";
 
     /**
      * APIから犬種のリストを取得します。
@@ -20,6 +20,7 @@ public class inu {
         try {
             HttpRequest breedsRequest = HttpRequest.newBuilder()
                     .uri(URI.create(BREEDS_API_URL))
+                    .header("x-api-key", "live_eehrIIKvl4UasDx8GzQLZ3nXAaYMSr0DJ1WWzahs8BDaFyMSCGmiLOtHxqu9zFnc")
                     .build();
             HttpResponse<String> breedsResponse = client.send(breedsRequest, HttpResponse.BodyHandlers.ofString());
 
@@ -57,6 +58,14 @@ public class inu {
                     "Cavalier King Charles Spaniel", "Shetland Sheepdog", "Italian Greyhound", "Jack Russell Terrier",
                     "Bulldog", "Siberian Husky", "Akita", "Samoyed", "Welsh Corgi Pembroke");
         }
+        // 犬種リストが空でないことを確認
+        if (ranking.isEmpty()) {
+            System.out.println("犬種リストが空です。");
+            return;
+        }
+        // ランダムに犬種を選ぶ
+        Random rand = new Random();
+        int idx = rand.nextInt(ranking.size());
 
         Map<String, String> breedJp = Map.ofEntries(
                 Map.entry("Toy Poodle", "トイ・プードル"),
@@ -88,27 +97,23 @@ public class inu {
                 Map.entry("Akita", "秋田犬"),
                 Map.entry("Samoyed", "サモエド"),
                 Map.entry("Welsh Corgi Pembroke", "ウェルシュ・コーギー・ペンブローク"));
-        // ランダムに犬種を選ぶ
-        Random rand = new Random();
-        int idx = rand.nextInt(ranking.size());
+        // 英語名を取得
         String breedEn = ranking.get(idx);
-        String breedJpName = breedJp.get(breedEn);
-        System.out.println("犬種: " + breedJpName);
+        // 日本語名を取得、存在しない場合は英語名を使用
+        String breedJpName = breedJp.getOrDefault(breedEn, breedEn + "（日本語名なし）");
+        System.out.println("犬種: " + breedJpName + " (英語名: " + breedEn + ")");
 
-        System.out.print("この犬種は人気ランキングで何位でしょうか？（数字で答えてください）: ");
-        Scanner scanner = new Scanner(System.in);
-        String answer = scanner.nextLine().trim();
-        int correct = idx + 1;
-        try {
-            int ans = Integer.parseInt(answer);
-            if (ans == correct) {
-                System.out.println("正解！");
-            } else {
-                System.out.println("不正解！正解は " + correct + " 位です。");
-            }
-        } catch (NumberFormatException e) {
-            System.out.println("数字で答えてください。正解は " + correct + " 位です。");
-        }
-        scanner.close();
+         System.out.print("この犬種は人気ランキングで何位でしょうか？（数字で答えてください）: ");
+         Scanner scanner = new Scanner(System.in);
+         String answer = scanner.nextLine().trim();
+         int correct = idx + 1; // 正しい順位はリストのインデックス+1
+         try {
+             int ans = Integer.parseInt(answer);
+             System.out.println(ans == correct ? "正解！" : "不正解！正解は " + correct + " 位です。");
+         } catch (NumberFormatException e) {
+             System.out.println("数字で答えてください。正解は " + correct + " 位です。");
+         } finally {
+             scanner.close();
+         }
     }
 }
