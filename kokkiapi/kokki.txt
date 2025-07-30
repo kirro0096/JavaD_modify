@@ -1,0 +1,24 @@
+クラス　【kokki.java】
+
+説明【REST Countries APIから国旗と国名データを取得し、国旗を見て国名を当てるGUIクイズゲームです。】
+
+---
+
+関数名 【fetchCountryData】
+
+リファレンス
+【REST Countries API: /v3.1/all】
+
+説明
+【REST Countries APIのエンドポイントを呼び出し、世界の国々のリストを取得します。
+APIからのレスポンスはJSON形式で、プログラムでは各国の日本語名、英語名、国旗画像のURLを抽出し、Countryオブジェクトのリストとして返します。
+データ取得に失敗した場合は例外をスローします。】
+
+---使用したWebApi---
+
+URL 【https://restcountries.com/v3.1/all】
+
+説明【REST Countries API のエンドポイントです。全ての国の情報を取得するために使用します。
+      このプログラムでは、APIからのレスポンスを軽量化するために、以下のパラメータを使用しています。
+      ・fields：取得するデータ項目を絞り込む（name, translations, flags を指定）】
+

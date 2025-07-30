@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "Set terminal to UTF-8 (chcp 65001)",
+			"command": "chcp 65001",
+			"isBackground": false,
+			"group": "build"
+		}
+	]
+}

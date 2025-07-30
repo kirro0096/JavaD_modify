@@ -7,26 +7,49 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class inu {
-    public static void main(String[] args) throws Exception {
-        HttpClient client = HttpClient.newHttpClient();
-        // --- ここからAPIで犬種リスト取得 ---
-        List<String> ranking = new ArrayList<>();
+    private static final HttpClient client = HttpClient.newHttpClient();
+    // 注: このURLはAPIキーがドメイン名に含まれているように見え、正しくない可能性があります。
+    // TheDogAPIを利用する場合、通常は "https://api.thedogapi.com/v1/breeds" のようなURLを使用します。
+    private static final String BREEDS_API_URL = "https://api.thedogapi.com/v1/breeds";
+
+    /**
+     * APIから犬種のリストを取得します。
+     * @return 犬種名のリスト。取得に失敗した場合はnullを返します。
+     */
+    private static List<String> getDogBreedsFromApi() {
         try {
-            String breedsApiUrl = "https://api.ehrIIKvl4UasDx8GzQLZ3nXAaYMSr0DJ1WWzahs8BDaFyMSCGmiLOtHxqu9zFnc/breeds";
             HttpRequest breedsRequest = HttpRequest.newBuilder()
-                    .uri(URI.create(breedsApiUrl))
+                    .uri(URI.create(BREEDS_API_URL))
+                    .header("x-api-key", "live_eehrIIKvl4UasDx8GzQLZ3nXAaYMSr0DJ1WWzahs8BDaFyMSCGmiLOtHxqu9zFnc")
                     .build();
             HttpResponse<String> breedsResponse = client.send(breedsRequest, HttpResponse.BodyHandlers.ofString());
+
+            if (breedsResponse.statusCode() != 200) {
+                System.err.println("APIリクエストエラー: ステータスコード " + breedsResponse.statusCode());
+                return null;
+            }
+
             JSONArray breedsArr = new JSONArray(breedsResponse.body());
+            List<String> breeds = new ArrayList<>();
             for (int i = 0; i < breedsArr.length(); i++) {
                 JSONObject breedObj = breedsArr.getJSONObject(i);
                 if (breedObj.has("name")) {
-                    ranking.add(breedObj.getString("name"));
+                    breeds.add(breedObj.getString("name"));
                 }
             }
+            return breeds;
         } catch (Exception e) {
-            System.out.println("犬種リスト取得エラー: " + e.getMessage());
-            // 取得できなかった場合は従来のリストを使う
+            System.err.println("犬種リストの取得中にエラーが発生しました: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static void main(String[] args) {
+        List<String> ranking = getDogBreedsFromApi();
+
+        // APIからの取得に失敗した場合、フォールバック用の固定リストを使用
+        if (ranking == null || ranking.isEmpty()) {
+            System.out.println("APIからの犬種リスト取得に失敗したため、固定のリストを使用します。");
             ranking = Arrays.asList(
                     "Toy Poodle", "Chihuahua", "Dachshund", "Shiba Inu", "Pomeranian", "Miniature Schnauzer",
                     "Yorkshire Terrier", "Shih Tzu", "Papillon", "French Bulldog",
@@ -35,7 +58,14 @@ public class inu {
                     "Cavalier King Charles Spaniel", "Shetland Sheepdog", "Italian Greyhound", "Jack Russell Terrier",
                     "Bulldog", "Siberian Husky", "Akita", "Samoyed", "Welsh Corgi Pembroke");
         }
-        // --- ここまでAPIで犬種リスト取得 ---
+        // 犬種リストが空でないことを確認
+        if (ranking.isEmpty()) {
+            System.out.println("犬種リストが空です。");
+            return;
+        }
+        // ランダムに犬種を選ぶ
+        Random rand = new Random();
+        int idx = rand.nextInt(ranking.size());
 
         Map<String, String> breedJp = Map.ofEntries(
                 Map.entry("Toy Poodle", "トイ・プードル"),
@@ -67,31 +97,23 @@ public class inu {
                 Map.entry("Akita", "秋田犬"),
                 Map.entry("Samoyed", "サモエド"),
                 Map.entry("Welsh Corgi Pembroke", "ウェルシュ・コーギー・ペンブローク"));
-        // ランダムに犬種を選ぶ
-        Random rand = new Random();
-        int idx = rand.nextInt(ranking.size());
+        // 英語名を取得
         String breedEn = ranking.get(idx);
-        String breedJpName = breedJp.get(breedEn);
-        System.out.println("犬種: " + breedJpName);
+        // 日本語名を取得、存在しない場合は英語名を使用
+        String breedJpName = breedJp.getOrDefault(breedEn, breedEn + "（日本語名なし）");
+        System.out.println("犬種: " + breedJpName + " (英語名: " + breedEn + ")");
 
-        // --- ここからAPIで画像取得 ---
-        // （画像取得処理は不要なので削除）
-        // --- ここまでAPIで画像取得 ---
-
-        System.out.print("この犬種は人気ランキングで何位でしょうか？（数字で答えてください）: ");
-        Scanner scanner = new Scanner(System.in);
-        String answer = scanner.nextLine().trim();
-        int correct = idx + 1;
-        try {
-            int ans = Integer.parseInt(answer);
-            if (ans == correct) {
-                System.out.println("正解！");
-            } else {
-                System.out.println("不正解！正解は " + correct + " 位です。");
-            }
-        } catch (NumberFormatException e) {
-            System.out.println("数字で答えてください。正解は " + correct + " 位です。");
-        }
-        scanner.close();
+         System.out.print("この犬種は人気ランキングで何位でしょうか？（数字で答えてください）: ");
+         Scanner scanner = new Scanner(System.in);
+         String answer = scanner.nextLine().trim();
+         int correct = idx + 1; // 正しい順位はリストのインデックス+1
+         try {
+             int ans = Integer.parseInt(answer);
+             System.out.println(ans == correct ? "正解！" : "不正解！正解は " + correct + " 位です。");
+         } catch (NumberFormatException e) {
+             System.out.println("数字で答えてください。正解は " + correct + " 位です。");
+         } finally {
+             scanner.close();
+         }
     }
 }
